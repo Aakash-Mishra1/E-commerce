@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Modern ShopVerse Light Mode */
+  --bg-color: #f1f5f9; /* Slate 100 */
+  --navy-color: #ffffff; /* White Cards */
+  --text-primary: #1e293b; /* Slate 800 Text */
+}
+
+.dark {
+  /* Modern Cyber-Dark Mode */
+  --bg-color: #0f172a; /* Slate 900 */
+  --navy-color: #1e293b; /* Slate 800 Cards */
+  --text-primary: #f8fafc; /* Slate 50 Text */
+}
+
+
+.light {
+  color: black;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: #1A73E8;
+  color: white;
+}
+
+.glass {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(26,115,232,0.35);
+  transform: scale(1.02);
+}
