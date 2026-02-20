@@ -9,14 +9,11 @@ const FeaturedProducts = ({ title = "Featured Products", category = null }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Fetch strictly by category if provided, otherwise all
         const res = await getProducts(category);
         let data = res.data;
         
-        // Simulating "Featured" vs "New" by simple shuffling or slicing if no backend support
-        // For now, we will just slice differently based on title hash or random to make it look different
         if (!category) {
-             // If generic "Featured", just take first 4-8
+             
              data = data.slice(0, 8);
         } else {
              data = data.slice(0, 8);
@@ -33,7 +30,7 @@ const FeaturedProducts = ({ title = "Featured Products", category = null }) => {
       }
     };
     fetchProducts();
-  }, [category]); // added category dependency
+  }, [category]); 
 
   return (
     <div className="py-12" data-aos="fade-up">

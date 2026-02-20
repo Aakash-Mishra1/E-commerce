@@ -1,44 +1,43 @@
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const dotenv = require("dotenv");
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_YourKeyHere", // Add these to .env later
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "YourSecretHere"
+dotenv.config();
+
+const instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Create Order (Backend)
-exports.createPaymentOrder = async (req, res) => {
+exports.createOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
-    
-    // Convert normal currency to smallest currency unit (paise for INR)
-    // amount in req.body is likely already total string "194,649" or number.
-    // It's safer to handle cleaning in backend or assume number.
-    
     const options = {
-      amount: Number(amount * 100), // amount in the smallest currency unit
+      amount: req.body.amount * 100,
       currency: "INR",
-      receipt: "receipt_order_" + Date.now(),
+      receipt: crypto.randomBytes(10).toString("hex"),
     };
 
-    const order = await razorpay.orders.create(options);
-    if (!order) return res.status(500).send("Some error occured");
-    
-    res.json(order);
+    instance.orders.create(options, (error, order) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something Went Wrong!" });
+      }
+      res.status(200).json({ data: order });
+    });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: "Internal Server Error!" });
+    console.log(error);
   }
 };
 
-// Verify Order (Backend)
 exports.verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
-    // We need secret here again
     const expectedSign = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "YourSecretHere")
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(sign.toString())
       .digest("hex");
 
@@ -49,5 +48,6 @@ exports.verifyPayment = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error!" });
+    console.log(error);
   }
 };

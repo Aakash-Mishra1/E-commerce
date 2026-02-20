@@ -3,17 +3,15 @@
 @tailwind utilities;
 
 :root {
-  /* Modern ShopVerse Light Mode */
-  --bg-color: #f1f5f9; /* Slate 100 */
-  --navy-color: #ffffff; /* White Cards */
-  --text-primary: #1e293b; /* Slate 800 Text */
+  --bg-color: #f1f5f9;
+  --navy-color: #ffffff; 
+  --text-primary: #1e293b; 
 }
 
 .dark {
-  /* Modern Cyber-Dark Mode */
-  --bg-color: #0f172a; /* Slate 900 */
-  --navy-color: #1e293b; /* Slate 800 Cards */
-  --text-primary: #f8fafc; /* Slate 50 Text */
+  --bg-color: #0f172a; 
+  --navy-color: #1e293b; 
+  --text-primary: #f8fafc;
 }
 
 

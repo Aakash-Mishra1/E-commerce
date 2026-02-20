@@ -24,9 +24,12 @@ const PromoBanner = () => {
               Upgrade your setup with our premium collection of headphones, keyboards, and more.
             </p>
             <Link to="/deals">
-              <Button variant="primary" className="bg-white text-blue-600 hover:bg-gray-100 border-none shadow-xl transform active:scale-95 transition-all">
-                Grab Deal Now
-              </Button>
+              <button className="bg-white text-brandBlue font-extrabold px-8 py-4 rounded-full shadow-2xl hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all duration-300 transform flex items-center gap-2 mx-auto md:mx-0">
+                <span className="text-lg">Grab Deal Now</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
             </Link>
             <div className="mt-8 flex items-center justify-center md:justify-start gap-4 text-white/60 text-sm">
                 <span>Free Shipping</span>

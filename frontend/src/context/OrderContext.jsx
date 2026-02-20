@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./AuthenticationContext";
 import { createOrder, getUserOrders } from "../api";
 
 const OrderContext = createContext();
@@ -38,15 +38,19 @@ export const OrderProvider = ({ children }) => {
             ...order,
             id: order._id,
             date: new Date(order.createdAt).toLocaleDateString(),
-            total: `₹${order.amount.toLocaleString()}`,
-            cartDetails: order.products,
-            status: order.status.charAt(0).toUpperCase() + order.status.slice(1)
+            total: `₹${(order.amount || 0).toLocaleString()}`, // Fallback for amount
+            cartDetails: order.products || [],
+            status: (order.status || 'Pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)
           }));
           
-          // Merge with local orders (preserving offline demo orders)
           setOrders(prev => {
-              const localOnly = prev.filter(o => o.id.toString().startsWith('DEMO') || o.id.toString().startsWith('OFFLINE'));
-              // Avoid duplicates if backend returns same orders (unlikely given ID formats)
+              const localOnly = prev.filter(o => {
+                  const idStr = o.id ? o.id.toString() : "";
+                  return idStr.startsWith('DEMO') || idStr.startsWith('OFFLINE') || idStr.startsWith('GUEST');
+              });
+              
+              // Only override if backend returns something OR if we want to sync empty state
+              // But sorting logic is fine here
               return [...localOnly, ...backendOrders].sort((a,b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
           });
         } catch (err) {
@@ -76,7 +80,7 @@ export const OrderProvider = ({ children }) => {
         
         if (user && user._id && !isOfflineDemo) {
             const apiData = {
-                userId: user._id, 
+                userId: user._id.toString(), // Ensure string format 
                 products: orderData.cartDetails.map(item => ({
                     productId: item._id || item.id, // Handles both API and local products
                     quantity: item.quantity || 1,
@@ -88,6 +92,7 @@ export const OrderProvider = ({ children }) => {
                 address: orderData.address || { street: "123 Tech St", city: "Cyber City", country: "India" }, // Default if missing
                 status: orderData.paymentInfo ? 'paid' : 'pending',
                 paymentInfo: orderData.paymentInfo || null,
+                couponCode: orderData.couponCode || null, // Pass coupon code to backend
             };
             
             // Validate amount before sending

@@ -1,6 +1,6 @@
 const Product = require("../models/Product");
 
-// CREATE PRODUCT
+// Product create karne ke liye
 exports.createProduct = async (req, res) => {
     const newProduct = new Product(req.body);
     try {
@@ -11,7 +11,7 @@ exports.createProduct = async (req, res) => {
     }
 };
 
-// UPDATE PRODUCT
+// Product update karne ke liye
 exports.updateProduct = async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -27,7 +27,7 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
-// DELETE PRODUCT
+// Product delete karne ke liye
 exports.deleteProduct = async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -37,7 +37,7 @@ exports.deleteProduct = async (req, res) => {
     }
 };
 
-// GET PRODUCT
+// Product lene ke liye
 exports.getProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -47,7 +47,7 @@ exports.getProduct = async (req, res) => {
     }
 };
 
-// GET ALL PRODUCTS
+// Sare product lene ke liye
 exports.getAllProducts = async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.category;
@@ -61,9 +61,9 @@ exports.getAllProducts = async (req, res) => {
                 category: {
                     $in: [qCategory],
                 },
-            });
+            }).sort({ createdAt: -1 });
         } else {
-            products = await Product.find();
+            products = await Product.find().sort({ createdAt: -1 });
         }
 
         res.status(200).json(products);

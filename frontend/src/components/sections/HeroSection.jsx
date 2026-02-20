@@ -6,8 +6,7 @@ const HeroSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 md:px-20 relative">
       <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        
-        {/* Left Content */}
+  
         <div className="order-2 md:order-1">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -39,7 +38,6 @@ const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Right Content (Floating Glass Card) */}
         <div className="order-1 md:order-2 flex justify-center relative">
           <motion.div
             animate={{ y: [0, -20, 0] }}
@@ -60,7 +58,6 @@ const HeroSection = () => {
                   <div><span className="text-yellow-400">{"}"}</span>;</div>
                 </div>
 
-                {/* Glow behind */}
                 <div className="absolute -z-10 bg-cyber-neon/20 w-40 h-40 blur-[80px] rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
              </div>
           </motion.div>

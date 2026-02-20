@@ -1,18 +1,57 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const productSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    oldPrice: { type: Number },
-    rating: { type: Number, default: 0 },
-    reviews: { type: Number, default: 0 },
-    category: { type: String, required: true },
-    image: { type: String, required: true },
-    images: [String],
-    discount: { type: Number },
-    description: { type: String },
-    features: [String],
-    featured: { type: Boolean, default: false }
-}, { timestamps: true });
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,  //ye fill karna hi padega its compulsory
+      trim: true,     //to remove spaces , agar user spaces add kar deta h to
+    },
 
-module.exports = mongoose.model('Product', productSchema);
+    price: {
+      type: Number,
+      required: true,
+    },
+
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    image: {
+      type: String,
+      required: true, 
+    },
+    
+    images: {
+      type: [String],
+      default: []
+    },
+
+    video: {
+      type: String, // Video URL for the product
+      default: ""
+    },
+
+    description: {
+      type: String,
+      trim: true,
+    },
+     rating: { 
+        type: Number,
+         default: 0
+    },
+    reviews: {
+         type: Number,
+        default: 0
+    },
+    stock: {
+      type: Number,
+      default: 0
+    }, 
+  },
+  { timestamps: true } 
+);
+
+module.exports = mongoose.model("Product", productSchema);

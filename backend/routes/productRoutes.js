@@ -2,19 +2,18 @@ const router = require("express").Router();
 const productController = require("../controllers/productController");
 const { verifyTokenAndAdmin } = require("../middleware/authMiddleware");
 
-// Create (Admin only)
+// Create (sirf Admin ke liye h)
 router.post("/", verifyTokenAndAdmin, productController.createProduct);
-
-// Update (Admin only)
+// Update (sirf Admin ke liye h)
 router.put("/:id", verifyTokenAndAdmin, productController.updateProduct);
-
-// Delete (Admin only)
+// Delete (sirf Admin ke liye h)
 router.delete("/:id", verifyTokenAndAdmin, productController.deleteProduct);
-
-// Get One
-router.get("/find/:id", productController.getProduct);
-
-// Get All
-router.get("/", productController.getAllProducts);
+router.get("/find/:id", productController.getProduct);  // Get One
+router.get("/", productController.getAllProducts);  // Get All
 
 module.exports = router;
+
+
+
+
+

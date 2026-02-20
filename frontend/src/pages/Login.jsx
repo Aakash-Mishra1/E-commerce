@@ -1,42 +1,46 @@
 import { useState, useContext } from "react";
 // import { API } from "../api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthenticationContext";
 import AppWrapper from "../components/layout/AppWrapper";
 import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+import SocialLogin from "../components/common/SocialLogin";
+import Loader from "../components/common/Loader";
 
 export default function Login() {
-  const { login, googleLogin, isFetching, error } = useContext(AuthContext);
+  const { login, isFetching, error } = useContext(AuthContext);
   // Default to demo credentials for easier testing
   const [input, setInput] = useState({ email: "rahul@example.com", password: "user123" });
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError("");
-   
-    const success = await login(input.email, input.password);
-    if (success) {
+    setLoading(true);
+
+    // Artificial delay to show the shopping symbol loader for better UX
+    await new Promise(resolve => setTimeout(resolve, 1500)); 
+
+    const result = await login(input.email, input.password);
+    setLoading(false);
+
+    if (result.success) {
       navigate('/profile'); // Redirect to Customer Profile/Dashboard
     } else {
-      setLoginError("Invalid email or password");
+      setLoginError(result.message || "Invalid email or password");
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setLoginError("");
-    const success = await googleLogin();
-    if (success) {
-      navigate('/profile');
-    } else {
-      setLoginError("Google Login Failed");
-    }
-  };
-
-  const socialLogin = (provider) => {
-    alert(`Login with ${provider} coming soon!`);
-  };
+  if (loading) {
+      return (
+          <AppWrapper>
+            <div className="flex items-center justify-center min-h-[80vh]">
+                <Loader text="Logging you in..." />
+            </div>
+          </AppWrapper>
+      );
+  }
 
   return (
     <AppWrapper>
@@ -65,10 +69,10 @@ export default function Login() {
                     value={input.password}
                     onChange={(e) => setInput({ ...input, password: e.target.value })} 
                 />
-                <button disabled={isFetching} type="submit" className="w-full bg-cyber-blue text-white p-3 rounded-lg font-bold hover:bg-cyber-blueLight transition shadow-lg shadow-cyber-blue/20">
-                    {isFetching ? "Logging in..." : "Login"}
+                <button disabled={loading} type="submit" className="w-full bg-cyber-blue text-white p-3 rounded-lg font-bold hover:bg-cyber-blueLight transition shadow-lg shadow-cyber-blue/20">
+                    {loading ? "..." : "Login"}
                 </button>
-                {error && <span className="text-red-500 text-sm block text-center mt-2">Invalid email or password</span>}
+                {/* {error && <span className="text-red-500 text-sm block text-center mt-2">Invalid email or password</span>} */}
             </form>
 
             <div className="relative my-6">
@@ -80,23 +84,12 @@ export default function Login() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-                <button 
-                    onClick={handleGoogleLogin}
-                    type="button"
-                    className="flex items-center justify-center gap-2 bg-white text-black p-3 rounded-lg font-bold hover:bg-gray-100 transition"
-                >
-                    <FcGoogle size={20} />
-                    Login with Google
-                </button>
-            </div>
+            <SocialLogin />
             
-            <div className="mt-8 p-4 bg-white/5 rounded-lg border border-white/10">
-                <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-2">Demo Customer</p>
-                <div className="flex justify-between text-sm text-gray-300">
-                    <span>Email: <span className="text-cyber-blue font-mono">rahul@example.com</span></span>
-                    <span>Pass: <span className="text-cyber-blue font-mono">user123</span></span>
-                </div>
+            <div className="mt-6 text-center">
+                <p className="text-gray-400 text-sm">
+                    New here? <button onClick={() => navigate('/register')} className="text-cyber-blue hover:text-cyber-blueLight underline ml-1 font-medium">Create an account</button>
+                </p>
             </div>
         </div>
       </div>

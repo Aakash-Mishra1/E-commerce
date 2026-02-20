@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShoppingCartIcon, 
   Bars3Icon, 
@@ -9,18 +9,33 @@ import {
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { useCart } from '../../context/CartContext';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from "../../context/AuthenticationContext";
 
 const Navbar = () => {
     const { cartItems } = useCart();
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
+    // Check if we are in a portal/dashboard view
+    const isPortalView = location.pathname.startsWith('/admin') || location.pathname.startsWith('/profile');
+    
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchTerm.trim()) {
             navigate(`/shop?search=${encodeURIComponent(searchTerm)}`);
+        }
+    };
+
+    const handleLogoClick = (e) => {
+        if (isPortalView) {
+            e.preventDefault();
+            if (window.confirm("Do you want to logout and go back to Home?")) {
+                logout();
+                navigate('/');
+            }
         }
     };
 
@@ -30,7 +45,7 @@ const Navbar = () => {
             <div className="flex items-center justify-between h-20 px-4 md:px-8 max-w-7xl mx-auto w-full relative">
                 
                 {/* Brand Logo */}
-                <Link to="/" className="flex items-center gap-3 group mr-8">
+                <Link to="/" onClick={handleLogoClick} className="flex items-center gap-3 group mr-8">
                     <div className="bg-gradient-to-br from-indigo-500 to-violet-600 p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-indigo-500/30 ring-1 ring-white/10">
                         <ShoppingBagIcon className="w-6 h-6 text-white" />
                     </div>
@@ -57,9 +72,7 @@ const Navbar = () => {
                     </button>
                 </form>
 
-                {/* Right Actions */}
                 <div className="flex items-center gap-4 md:gap-6">
-                    {/* Admin Icon - Visible to admins or for login */}
                     {(!user || (user && user.isAdmin)) && (
                          <Link to={user ? "/admin/dashboard" : "/admin/login"} className="hidden md:flex flex-col items-center justify-center p-2 group hover:bg-white/5 rounded-xl border border-transparent hover:border-pink-500/20 transition-all">
                             <div className="relative p-2 bg-[#1e293b] rounded-lg group-hover:bg-pink-500/20 transition-colors border border-gray-700/50 group-hover:border-pink-500/50">
@@ -69,18 +82,16 @@ const Navbar = () => {
                          </Link>
                     )}
 
-                    {/* Account */}
                     <Link to={user ? (user.isAdmin ? "/admin/dashboard" : "/profile") : "/login"} className="hidden md:flex items-center gap-3 hover:bg-white/5 p-2 rounded-xl transition-all group border border-transparent hover:border-white/5">
                         <div className="p-2 bg-[#1e293b] rounded-lg group-hover:bg-indigo-500/20 transition-colors border border-gray-700/50 group-hover:border-indigo-500/50">
                             <UserIcon className="w-5 h-5 text-gray-300 group-hover:text-indigo-300" />
                         </div>
                         <div className="flex flex-col text-xs">
                             <span className="text-gray-500 group-hover:text-gray-400 text-[10px] uppercase font-bold tracking-wider transition-colors">Welcome</span>
-                            <span className="font-semibold truncate max-w-[100px] text-gray-200 group-hover:text-white transition-colors">{user ? user.username.split(' ')[0] : 'Sign In'}</span>
+                            <span className="font-semibold truncate max-w-[100px] text-gray-200 group-hover:text-white transition-colors">{(user && user.username) ? user.username.split(' ')[0] : 'Sign In'}</span>
                         </div>
                     </Link>
 
-                    {/* Cart */}
                     <Link to="/cart" className="relative group p-2">
                         <div className="relative p-2.5 bg-[#1e293b] rounded-xl group-hover:bg-indigo-500/20 transition-all border border-gray-700/50 group-hover:border-indigo-500/50 group-hover:shadow-lg group-hover:shadow-indigo-500/20 group-hover:-translate-y-0.5 duration-300">
                             <ShoppingCartIcon className="w-6 h-6 text-gray-300 group-hover:text-indigo-300 transition-colors" />
@@ -92,14 +103,42 @@ const Navbar = () => {
                         )}
                     </Link>
 
-                     {/* Mobile Menu Toggle */}
-                     <button className="md:hidden p-2 text-gray-300 hover:text-white bg-[#1e293b] rounded-lg border border-gray-700/50">
+                     <button 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="md:hidden p-2 text-gray-300 hover:text-white bg-[#1e293b] rounded-lg border border-gray-700/50"
+                     >
                         <Bars3Icon className="w-6 h-6" />
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Search - Visible under 768px */}
+            {/* Mobile Menu Dropdown */}
+            {isMenuOpen && (
+                <div className="md:hidden bg-[#0f172a] border-t border-gray-800 px-4 pt-2 pb-6 flex flex-col gap-4 absolute w-full z-50 shadow-2xl">
+                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white py-2 border-b border-gray-800">Home</Link>
+                    <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white py-2 border-b border-gray-800">Shop</Link>
+                    <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white py-2 border-b border-gray-800 flex justify-between">
+                        Cart 
+                        <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">{cartItems.length}</span>
+                    </Link>
+                    {user ? (
+                        <>
+                            <Link to={user.isAdmin ? "/admin/dashboard" : "/profile"} onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-white py-2 border-b border-gray-800">
+                                {user.isAdmin ? "Admin Dashboard" : "My Profile"}
+                            </Link>
+                            <button onClick={() => { logout(); setIsMenuOpen(false); navigate('/'); }} className="text-left text-red-400 hover:text-red-300 py-2">
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex flex-col gap-3 mt-2">
+                            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-center w-full py-2 rounded-lg bg-[#1e293b] text-white border border-gray-700">Login</Link>
+                            <Link to="/register" onClick={() => setIsMenuOpen(false)} className="text-center w-full py-2 rounded-lg bg-indigo-600 text-white font-semibold">Sign Up</Link>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <div className="md:hidden px-4 pb-4">
                 <form className="relative" onSubmit={handleSearch}>
                     <input 
@@ -115,9 +154,10 @@ const Navbar = () => {
                 </form>
             </div>
 
-            {/* Secondary Nav / Categories */}
+            {!isPortalView && (
             <div className="bg-[#0f172a] border-t border-gray-800/60 ">
                 <div className="max-w-7xl mx-auto px-4 h-12 flex items-center gap-8 text-sm font-medium text-gray-400 whitespace-nowrap overflow-x-auto scrollbar-hide">
+                    {/* Categories Links */}
                     <Link to="/shop" className="hover:text-white transition-colors flex items-center gap-2 text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20 hover:bg-indigo-500/20 hover:border-indigo-500/40">
                         <Bars3Icon className="w-4 h-4" /> All Categories
                     </Link>
@@ -135,6 +175,7 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
+            )}
         </nav>
     );
 };

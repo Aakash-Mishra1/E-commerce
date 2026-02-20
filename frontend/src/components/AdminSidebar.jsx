@@ -1,18 +1,31 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthenticationContext";
+import { useToast } from "../context/ToastContext";
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isOpen, onClose }) {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogout = () => {
     logout();
+    toast.success("Successfully Signed Out");
     navigate("/");
   };
 
   return (
-    <div className="w-64 bg-cyber-dark2 text-white min-h-screen p-5 border-r border-white/10 flex flex-col justify-between">
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+            onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-cyber-dark2 text-white min-h-screen p-5 border-r border-white/10 flex flex-col justify-between transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 shadow-2xl md:shadow-none`}>
       <div>
         <h1 className="text-2xl mb-8 font-poppins font-bold text-cyber-blue">Admin Panel</h1>
         <div className="flex flex-col gap-4 font-inter">
@@ -47,5 +60,6 @@ export default function AdminSidebar() {
         </button>
       </div>
     </div>
+    </>
   );
 }

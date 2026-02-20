@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
     <footer className="bg-[#050914] border-t border-white/10 pt-16 pb-8 mt-auto relative z-10 overflow-hidden">
-      {/* Footer Glow Effect */}
+    
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-1 bg-gradient-to-r from-transparent via-brandBlue to-transparent opacity-50"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand Column */}
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="text-2xl font-bold font-poppins text-white tracking-tight mb-4 inline-block">
                 <span className="text-brandBlue drop-shadow-lg">Shop</span>Verse
@@ -18,14 +17,12 @@ const Footer = () => {
                 Your premium destination for the latest tech, gadgets, and lifestyle products. Quality guaranteed.
             </p>
             <div className="flex space-x-4">
-                {/* Social Placeholders */}
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-brandBlue hover:scale-110 transition-all duration-300 cursor-pointer shadow-lg shadow-black/20">Fb</div>
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-brandBlue hover:scale-110 transition-all duration-300 cursor-pointer shadow-lg shadow-black/20">Tw</div>
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-brandBlue hover:scale-110 transition-all duration-300 cursor-pointer shadow-lg shadow-black/20">Ig</div>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-white font-bold mb-6 font-poppins text-lg">Shop</h3>
             <ul className="space-y-3 text-sm text-gray-300 font-medium">
@@ -36,7 +33,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h3 className="text-white font-bold mb-6 font-poppins text-lg">Support</h3>
              <ul className="space-y-3 text-sm text-gray-300 font-medium">
@@ -47,7 +43,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
           <div>
             <h3 className="text-white font-bold mb-6 font-poppins text-lg">Stay Updated</h3>
             <p className="text-gray-300 text-sm mb-4 font-medium">Subscribe for exclusive offers and deals.</p>

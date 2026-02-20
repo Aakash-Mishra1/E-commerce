@@ -15,7 +15,6 @@ const BrandLogo = ({ className = "w-10 h-10" }) => {
         </linearGradient>
       </defs>
       
-      {/* Handle */}
       <path 
         d="M9 8V6C9 4.34315 10.3431 3 12 3C13.6569 3 15 4.34315 15 6V8" 
         stroke="url(#simpleGrad)" 
@@ -24,7 +23,6 @@ const BrandLogo = ({ className = "w-10 h-10" }) => {
         strokeLinejoin="round"
       />
       
-      {/* Bag Body - Simple Rounded Rect */}
       <rect 
         x="5" 
         y="8" 
@@ -34,7 +32,6 @@ const BrandLogo = ({ className = "w-10 h-10" }) => {
         fill="url(#simpleGrad)" 
       />
       
-      {/* Simple 'V' cut-out for Verse */}
       <path 
         d="M9.5 13L12 16L14.5 13" 
         stroke="white" 

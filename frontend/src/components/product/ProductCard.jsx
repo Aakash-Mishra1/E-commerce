@@ -1,16 +1,53 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid, StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { AuthContext } from '../../context/AuthenticationContext';
+import { useToast } from '../../context/ToastContext';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const productId = product._id || product.id; // Correct ID access
+  const { user } = useContext(AuthContext);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const productId = product._id || product.id; 
   const isWishlisted = isInWishlist(productId);
+
+  const [isAdding, setIsAdding] = React.useState(false);
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!user) {
+        toast.error("Please login to add items to cart");
+        navigate('/login');
+        return;
+    }
+    
+    setIsAdding(true);
+    // Simulate a small delay for better UX or wait for actual async operation if addToCart was async
+    await new Promise(resolve => setTimeout(resolve, 500));
+    addToCart(product);
+    setIsAdding(false);
+  };
+    
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+        toast.error("Please login to like items");
+        navigate('/login');
+        return;
+    }
+    toggleWishlist(product);
+  };
 
   return (
     <motion.div 
@@ -37,21 +74,18 @@ const ProductCard = ({ product }) => {
          </Link>
          
          <button 
-            onClick={(e) => {
-                e.preventDefault();
-                toggleWishlist(product);
-            }}
+            onClick={handleWishlist}
             className="absolute top-3 right-3 p-2 rounded-full bg-white/90 dark:bg-black/40 backdrop-blur-md hover:bg-white dark:hover:bg-gray-800 transition-all shadow-sm z-10 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 duration-300 transform"
          >
             {isWishlisted ? <HeartIconSolid className="w-5 h-5 text-rose-500" /> : <HeartIcon className="w-5 h-5 text-gray-400 hover:text-rose-400" />}
          </button>
       </div>
 
-      {/* Info Area */}
+      {/* Infomation Area */}
       <div className="p-5 flex flex-col flex-grow">
         <div className="text-[10px] font-bold tracking-wider text-indigo-500 uppercase mb-1.5">{product.category}</div>
         
-        <Link to={`/product/${product.id}`} className="block mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        <Link to={`/product/${productId}`} className="block mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
             <h3 className="text-gray-900 dark:text-white font-bold leading-tight line-clamp-2 h-10 text-sm md:text-base">
                 {product.name}
             </h3>
@@ -78,11 +112,19 @@ const ProductCard = ({ product }) => {
             </div>
 
             <button 
-                onClick={() => addToCart(product)} 
+                onClick={handleAddToCart} 
+                disabled={isAdding}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center justify-center group/btn relative overflow-hidden"
             >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
-                <ShoppingCartIcon className="w-5 h-5 relative z-10" />
+                {isAdding ? (
+                   <svg className="animate-spin h-5 w-5 text-white relative z-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                ) : (
+                    <ShoppingCartIcon className="w-5 h-5 relative z-10" />
+                )}
             </button>
         </div>
       </div>

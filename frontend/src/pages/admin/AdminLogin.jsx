@@ -1,30 +1,57 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthenticationContext";
 import { useNavigate } from "react-router-dom";
 import { FiShield, FiLock, FiMail } from "react-icons/fi";
 import GlassCard from "../../components/common/GlassCard";
+import Loader from "../../components/common/Loader";
+import { useToast } from "../../context/ToastContext";
 
 export default function AdminLogin() {
   const { login } = useContext(AuthContext);
+  const { addToast } = useToast();
   // Default to admin credentials for easier testing
   const [input, setInput] = useState({ email: "admin@techstore.com", password: "admin123" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true); // Start loading
+
+    // Artificial delay to show the shopping symbol loader as requested
+    await new Promise(resolve => setTimeout(resolve, 1500)); 
+
     try {
-        const user = await login(input.email, input.password);
-        if (user && user.isAdmin) {
+        const result = await login(input.email, input.password);
+        
+        // Debug
+        console.log("Admin Login Response:", result); 
+
+        if (result.success && result.data?.user?.isAdmin) {
+            addToast("Admin Access Granted", "success");
             navigate('/admin/dashboard');
         } else {
-            setError("Invalid Admin Credentials or Access Denied");
+            setError(result.message || "Invalid Admin Credentials or Access Denied");
+            addToast("Access Denied", "error");
         }
-    } catch {
-        setError("Login failed.");
+    } catch (error) {
+        console.error("Admin Login Error:", error);
+        setError("Login failed. Check connection.");
+        addToast("Network Error", "error");
+    } finally {
+        setLoading(false);
     }
   };
+
+  if (loading) {
+      return (
+          <div className="min-h-screen bg-cyber-dark1 flex items-center justify-center">
+              <Loader text="Verifying Admin Credentials..." />
+          </div>
+      );
+  }
 
   return (
     <div className="min-h-screen bg-cyber-dark1 flex items-center justify-center p-4 relative overflow-hidden">

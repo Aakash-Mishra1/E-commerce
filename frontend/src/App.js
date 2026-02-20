@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ThemeProvider from "./context/ThemeContext";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthenticationContext";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { OrderProvider } from "./context/OrderContext";

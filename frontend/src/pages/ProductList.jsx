@@ -51,7 +51,7 @@ const ProductList = () => {
     }
   }, [categoryParam]);
 
-  const categories = ['All', 'Audio', 'Gaming', 'Wearables', 'Monitors', 'Photography', 'Furniture', 'Computers', 'Sports'];
+  const categories = ['All', 'Audio', 'Mobiles', 'Laptops', 'Gaming', 'Wearables', 'Monitors', 'Photography', 'Furniture', 'Home & Kitchen', 'Sports'];
 
   const filteredProducts = products.filter(product => {
     // Price check - handle both number and string inputs from DB
